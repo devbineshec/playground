@@ -74,18 +74,7 @@ export default function App() {
 
     // Determine if we should insert above or below the target card
     let insertIndex = targetIndex;
-    if (over && over.rect && active && active.rect) {
-      const pointerY = active.rect.current.translated?.top ?? active.rect.current.initial.top;
-      const overTop = over.rect.top;
-      const overHeight = over.rect.height;
-      if (pointerY > overTop + overHeight / 2) {
-        // Insert below
-        insertIndex = targetIndex + 1;
-      } else {
-        // Insert above (default)
-        insertIndex = targetIndex;
-      }
-    }
+
 
     // If moving within the same column, adjust index if needed
     if (sourceCol === targetCol) {
@@ -93,6 +82,25 @@ export default function App() {
       if (oldIndex < insertIndex) insertIndex--;
       newTargetCards = newSourceCards;
     }
+    else {
+      if (over && over.rect && active && active.rect) {
+        const pointerY = active.rect.current.translated?.top ?? active.rect.current.initial.top;
+        const overTop = over.rect.top;
+        const overHeight = over.rect.height;
+        if (pointerY > overHeight / 2) {
+          // Insert below
+          insertIndex = targetIndex + 1;
+        } else {
+          // Insert above (default)
+          insertIndex = targetIndex;
+        }
+      }
+
+    }
+
+
+
+
 
     newTargetCards.splice(insertIndex, 0, activeCard);
 
@@ -131,7 +139,5 @@ export default function App() {
       columns[col]?.some(card => card?.id === id)
     );
   }
-
-
 }
 
