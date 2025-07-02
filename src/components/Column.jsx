@@ -9,6 +9,7 @@ export default function Column({ id, title, cards, activeCardId }) {
   return (
     <div
       ref={setNodeRef}
+      data-column-id={id}
       style={{
         width: '250px',
         minHeight: '300px',

@@ -25,16 +25,8 @@ export default function App() {
 
   const handleDragOver = ({ active, over }) => {
 
-
-    console.log(active, over);
-
-
-
-
     const sourceCol = findColumnWithCard(columns, active.id);
     const targetCol = findColumnWithCard(columns, over.id);
-
-    console.log(targetCol);
 
     const targetIndex = columns[targetCol]?.findIndex(c => c.id === over.id);
     const activeCard = columns[sourceCol].find(c => c.id === active.id);
@@ -74,33 +66,26 @@ export default function App() {
 
     // Determine if we should insert above or below the target card
     let insertIndex = targetIndex;
-
+    if (over && over.rect && active && active.rect) {
+      const pointerY = active.rect.current.translated?.top ?? active.rect.current.initial.top;
+      const overTop = over.rect.top;
+      const overHeight = over.rect.height;
+      if (pointerY > overHeight / 2) {
+        // Insert below
+        insertIndex = targetIndex + 1;
+      } else if (pointerY > overHeight / 2) {
+        // Insert above (default)
+        insertIndex = targetIndex;
+      }
+    }
 
     // If moving within the same column, adjust index if needed
     if (sourceCol === targetCol) {
       const oldIndex = columns[sourceCol].findIndex(c => c.id === active.id);
-      if (oldIndex < insertIndex) insertIndex--;
+      const overTop = over.rect.top;
+      if (oldIndex < 2*overTop + insertIndex) insertIndex--;
       newTargetCards = newSourceCards;
     }
-    else {
-      if (over && over.rect && active && active.rect) {
-        const pointerY = active.rect.current.translated?.top ?? active.rect.current.initial.top;
-        const overTop = over.rect.top;
-        const overHeight = over.rect.height;
-        if (pointerY > overHeight / 2) {
-          // Insert below
-          insertIndex = targetIndex + 1;
-        } else {
-          // Insert above (default)
-          insertIndex = targetIndex;
-        }
-      }
-
-    }
-
-
-
-
 
     newTargetCards.splice(insertIndex, 0, activeCard);
 
