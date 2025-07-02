@@ -26,9 +26,14 @@ export default function App() {
   const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragOver = ({ active, over }) => {
-
-    const sourceCol = findColumnWithCard(columns, active.id);
-    const targetCol = findColumnWithCard(columns, over.id);
+    
+    
+    let sourceCol = findColumnWithCard(columns, active.id);
+    let targetCol = findColumnWithCard(columns, over.id);
+    
+    if (over.id.startsWith("column")) {
+       targetCol = findColumnWithCard(columns,getColumnId(over.id));
+    }
 
     const targetIndex = columns[targetCol]?.findIndex(c => c?.id === over?.id);
     const activeCard = columns[sourceCol]?.find(c => c?.id === active?.id);
@@ -127,7 +132,7 @@ export default function App() {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div dir='rtl' style={{ display: 'flex', gap: '16px', padding: '20px' }}>
+      <div dir='ltr' style={{ display: 'flex', gap: '16px', padding: '20px' }}>
         <SortableContext
           id="columns"
           items={Object.keys(columns).map(colId => `column-${colId}`)}
